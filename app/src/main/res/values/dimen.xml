@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="navButtonMargin">15dp</dimen>
+    <dimen name="navMargin">10dp</dimen>
+    <dimen name="navPadding">5dp</dimen>
+</resources>
