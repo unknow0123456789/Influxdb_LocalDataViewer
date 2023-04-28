@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements CustomResponse{
         RefreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ReceiveDataFromInfluxDB(PostReceivedDB);
+                ReceiveDataFromInfluxDB(PostReceivedDB,true);
             }
         });
         TableButton.setOnClickListener(new View.OnClickListener() {
@@ -91,8 +91,9 @@ public class MainActivity extends AppCompatActivity implements CustomResponse{
             MainActivity.this.OnResponse(CurrentFragmentID);
         }
     }
-    public void ReceiveDataFromInfluxDB(CustomResponse CR)
+    public void ReceiveDataFromInfluxDB(CustomResponse CR,boolean UiThreadLock)
     {
+        if(CurrentRefreshOption==null) return;
         String BucketName=CurrentRefreshOption.BucketName;
         String ORG=CurrentRefreshOption.OrgName;
         String SampleFrom=CurrentRefreshOption.SampleTime;
@@ -109,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements CustomResponse{
                             Log.d("ReceivedQuery", record.getMeasurement()+" : "+record.getValue().toString());
                         }
                     }
-                    if(CurrentFragmentID==4) MainActivity.this.runOnUiThread(new Runnable() {
+                    if(UiThreadLock==false) MainActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             MainActivity.this.OnResponse(-3);
@@ -120,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements CustomResponse{
                 catch (Exception ex)
                 {
                     Log.e("Query_Exception", ex.getMessage());
-                    if(CurrentFragmentID==4) MainActivity.this.runOnUiThread(new Runnable() {
+                    if(UiThreadLock==false) MainActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             MainActivity.this.OnResponse(-4);
@@ -212,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements CustomResponse{
                         else
                         {
                             CurrentRefreshOption=(RefreshOption) obj;
-                            ReceiveDataFromInfluxDB(PostReceivedDB);
+                            ReceiveDataFromInfluxDB(PostReceivedDB,false);
                         }
                     }
                 });
