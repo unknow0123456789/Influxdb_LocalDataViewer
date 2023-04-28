@@ -3,12 +3,105 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.Login_Fragment">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    tools:context=".Fragments.Login_Fragment"
+    android:background="@color/white"
+    >
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
-
+        android:background="@color/white"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="InfluxDB DataViewer"
+            android:textStyle="bold"
+            android:textSize="@dimen/LoginTitleTextSize"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:fontFamily="@font/nexa_heavy"
+            android:layout_marginTop="@dimen/LoginTitleMarginTop"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/Login_Title"
+            ></TextView>
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="80dp"
+            android:src="@drawable/loading"
+            android:scaleType="fitCenter"
+            android:id="@+id/LoadingImage"
+            android:layout_centerInParent="true"
+            android:layout_below="@id/Login_Title"
+            android:visibility="gone"
+            ></ImageView>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/LoginEditTextMargin_Horizontal"
+            android:layout_marginBottom="@dimen/LoginEditTextMargin_Vertical"
+            android:layout_marginTop="@dimen/IPBOX_LoginEditTextMargin_Vertical"
+            android:textColor="@color/black"
+            android:textColorHint="@color/gray"
+            android:hint="192.168.xxx.xxx:pppp"
+            android:id="@+id/Login_IpBox"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/Login_Title"
+            ></EditText>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/LoginEditTextMargin_Horizontal"
+            android:layout_marginVertical="@dimen/LoginEditTextMargin_Vertical"
+            android:textColor="@color/black"
+            android:textColorHint="@color/gray"
+            android:hint="Account's username"
+            android:id="@+id/Login_UserNameBox"
+            android:layout_below="@id/Login_IpBox"
+            android:layout_centerHorizontal="true"
+            ></EditText>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/LoginEditTextMargin_Horizontal"
+            android:layout_marginVertical="@dimen/LoginEditTextMargin_Vertical"
+            android:textColor="@color/black"
+            android:textColorHint="@color/gray"
+            android:hint="Account's password"
+            android:id="@+id/Login_PasswordBox"
+            android:layout_below="@id/Login_UserNameBox"
+            android:layout_centerHorizontal="true"
+            ></EditText>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_shape"
+            android:backgroundTint="@color/black"
+            android:layout_marginHorizontal="@dimen/LoginEditTextMargin_Horizontal"
+            android:layout_marginVertical="@dimen/LoginEditTextMargin_Vertical"
+            android:layout_below="@id/Login_PasswordBox"
+            android:id="@+id/Login_ButtonContainer"
+            >
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Proceed"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:background="?selectableItemBackgroundBorderless"
+                android:id="@+id/Login_Button"
+                ></Button>
+        </RelativeLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/LoginEditTextMargin_Horizontal"
+            android:visibility="gone"
+            android:id="@+id/Login_FailedNotification"
+            android:textColor="@color/red"
+            android:text="Failed to proceed. Please confirm your inputs and try again !"
+            android:textAlignment="center"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/Login_ButtonContainer"
+            ></TextView>
+    </RelativeLayout>
 </FrameLayout>
