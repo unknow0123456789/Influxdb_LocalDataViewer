@@ -38,6 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/LoginEditTextMargin_Horizontal"
+            android:padding="@dimen/LoginEditTextPadding"
             android:layout_marginBottom="@dimen/LoginEditTextMargin_Vertical"
             android:layout_marginTop="@dimen/IPBOX_LoginEditTextMargin_Vertical"
             android:textColor="@color/black"
@@ -46,30 +47,35 @@
             android:id="@+id/Login_IpBox"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/Login_Title"
+            android:background="@drawable/bordered_connered_rectangle_shape"
             ></EditText>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/LoginEditTextMargin_Horizontal"
             android:layout_marginVertical="@dimen/LoginEditTextMargin_Vertical"
+            android:padding="@dimen/LoginEditTextPadding"
             android:textColor="@color/black"
             android:textColorHint="@color/gray"
             android:hint="Account's username"
             android:id="@+id/Login_UserNameBox"
             android:layout_below="@id/Login_IpBox"
             android:layout_centerHorizontal="true"
+            android:background="@drawable/bordered_connered_rectangle_shape"
             ></EditText>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/LoginEditTextMargin_Horizontal"
             android:layout_marginVertical="@dimen/LoginEditTextMargin_Vertical"
+            android:padding="@dimen/LoginEditTextPadding"
             android:textColor="@color/black"
             android:textColorHint="@color/gray"
             android:hint="Account's password"
             android:id="@+id/Login_PasswordBox"
             android:layout_below="@id/Login_UserNameBox"
             android:layout_centerHorizontal="true"
+            android:background="@drawable/bordered_connered_rectangle_shape"
             ></EditText>
         <RelativeLayout
             android:layout_width="match_parent"

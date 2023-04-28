@@ -4,6 +4,7 @@
     <dimen name="LoginEditTextMargin_Horizontal">45dp</dimen>
     <dimen name="LoginEditTextMargin_Vertical">10dp</dimen>
     <dimen name="IPBOX_LoginEditTextMargin_Vertical">100dp</dimen>
+    <dimen name="LoginEditTextPadding">10dp</dimen>
     <dimen name="LoginTitleTextSize">30dp</dimen>
     <dimen name="LoginTitleMarginTop">40dp</dimen>
 
