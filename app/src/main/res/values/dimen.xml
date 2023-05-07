@@ -23,5 +23,8 @@
     <dimen name="SettingButtonMarginHorizontal">120dp</dimen>
 
 
+    <dimen name="GraphInnerMargin">10dp</dimen>
+
+
 
 </resources>

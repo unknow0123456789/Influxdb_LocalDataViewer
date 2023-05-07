@@ -174,6 +174,7 @@ public class Setting_Fragment extends Fragment {
     private void setListCategoryTime(Spinner TimeChoice)
     {
         List<Category> dalist = new ArrayList<>();
+        dalist.add(new Category("30m","-30m"));
         dalist.add(new Category("1h","-1h"));
         dalist.add(new Category("3h","-3h"));
         dalist.add(new Category("6h","-6h"));
