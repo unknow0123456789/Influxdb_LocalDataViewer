@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.example.influxdb_dataviewer.ApiRelated.RefreshOption;
+import com.example.influxdb_dataviewer.Fragments.Graph_Fragment;
 import com.example.influxdb_dataviewer.Fragments.Login_Fragment;
 import com.example.influxdb_dataviewer.Fragments.Setting_Fragment;
 import com.example.influxdb_dataviewer.Fragments.Table_Fragment;
@@ -33,15 +34,29 @@ public class MainActivity extends AppCompatActivity implements CustomResponse{
     public RefreshOption CurrentRefreshOption;
     public List<FluxTable> CurrentTables;
     private Fragment CurrentFragment;
+    private boolean RefreshPressedCheck=false;
     public int CurrentFragmentID =1;
     public CustomResponse PostReceivedDB=new CustomResponse() {
         @Override
         public void OnResponse(Object obj) {
             CurrentTables=(List<FluxTable>) obj;
-            Log.d("testTransferTables", CurrentTables.get(0).getRecords().get(0).getMeasurement());
+            //Log.d("testTransferTables", CurrentTables.get(0).getRecords().get(0).getMeasurement());
             if(CurrentFragmentID !=2 && CurrentFragmentID !=3)
             {
-                ChangeFragmentTo(2);
+                ChangeFragmentTo(2,false);
+            }
+            else {
+                switch (CurrentFragmentID){
+                    case 2:
+                        if(RefreshPressedCheck==true){
+                            ChangeFragmentTo(2,true);
+                            RefreshPressedCheck=false;
+                        }
+                        break;
+                    case 3:
+                        ChangeFragmentTo(3,true);
+                        break;
+                }
             }
         }
     };
@@ -60,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements CustomResponse{
         RefreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                RefreshPressedCheck=true;
                 ReceiveDataFromInfluxDB(PostReceivedDB,true);
             }
         });
@@ -67,25 +83,30 @@ public class MainActivity extends AppCompatActivity implements CustomResponse{
             @Override
             public void onClick(View v) {
 
-                ChangeFragmentTo(2);
+                ChangeFragmentTo(2,false);
             }
         });
         GraphButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ChangeFragmentTo(3);
+                ChangeFragmentTo(3,false);
             }
         });
         SettingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ChangeFragmentTo(4);
+                ChangeFragmentTo(4,false);
             }
         });
     }
-    public void ChangeFragmentTo(int FragmentID)
+    public void ChangeFragmentTo(int FragmentID,boolean ForceFull)
     {
         if(CurrentFragmentID!=FragmentID)
+        {
+            CurrentFragmentID =FragmentID;
+            MainActivity.this.OnResponse(CurrentFragmentID);
+        }
+        else if (ForceFull==true)
         {
             CurrentFragmentID =FragmentID;
             MainActivity.this.OnResponse(CurrentFragmentID);
@@ -114,9 +135,10 @@ public class MainActivity extends AppCompatActivity implements CustomResponse{
                         @Override
                         public void run() {
                             MainActivity.this.OnResponse(-3);
+                            CR.OnResponse(tables);
                         }
                     });
-                    CR.OnResponse(tables);
+                    else CR.OnResponse(tables);
                 }
                 catch (Exception ex)
                 {
@@ -192,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements CustomResponse{
                         currentClient=(InfluxDBClient) obj;
                         Log.e("TestTransferClient", "Success");
                         State2();
-                        ChangeFragmentTo(4);
+                        ChangeFragmentTo(4,false);
                     }
                 }));
                 break;
@@ -200,6 +222,7 @@ public class MainActivity extends AppCompatActivity implements CustomResponse{
                 SetFragmentToFocus(new Table_Fragment(CurrentTables));
                 break;
             case 3:
+                SetFragmentToFocus(new Graph_Fragment(CurrentTables));
                 break;
             case 4:
                 Setting_Fragment setting_fragment=new Setting_Fragment(currentClient, new CustomResponse() {
@@ -208,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements CustomResponse{
                         if(obj==null)
                         {
                             State1();
-                            ChangeFragmentTo(1);
+                            ChangeFragmentTo(1,false);
                         }
                         else
                         {

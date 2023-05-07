@@ -13,32 +13,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 
-import com.example.influxdb_dataviewer.MainActivity;
 import com.example.influxdb_dataviewer.R;
 import com.example.influxdb_dataviewer.RecyclerView.DataTableAdapter;
 import com.example.influxdb_dataviewer.Spinner.Category;
 import com.example.influxdb_dataviewer.Spinner.CategoryAdapter;
 import com.influxdb.query.FluxTable;
 
-import java.sql.Time;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class Table_Fragment extends Fragment {
-    private List<FluxTable> UsageTable;
-    private FluxTable table;
+    private List<FluxTable> UsageTables;
 
     public Table_Fragment(List<FluxTable>tables) {
         try{
-            this.UsageTable=tables;
+            this.UsageTables =tables;
         }
         catch (Exception ex)
         {
@@ -55,7 +45,7 @@ public class Table_Fragment extends Fragment {
                              Bundle savedInstanceState) {
         View v= inflater.inflate(R.layout.fragment_table_, container, false);
 
-        if(UsageTable!=null)
+        if(UsageTables !=null)
         {
             RecyclerView DataTable=v.findViewById(R.id.Table_DataTable);
             LinearLayoutManager linearLayoutManager= new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false);
@@ -63,12 +53,12 @@ public class Table_Fragment extends Fragment {
             DataTable.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
 
             Spinner MeasurementSpinner=v.findViewById(R.id.Table_SpinnerMeasurement);
-            CategoryAdapter categoryAdapter=new CategoryAdapter(getActivity(),R.layout.item_select,getMeasurementSpinnerList(UsageTable));
+            CategoryAdapter categoryAdapter=new CategoryAdapter(getActivity(),R.layout.item_select,getMeasurementSpinnerList(UsageTables));
             MeasurementSpinner.setAdapter(categoryAdapter);
             MeasurementSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    DataTableAdapter dataTableAdapter=new DataTableAdapter(getActivity(),UsageTable.get((int)id).getRecords());
+                    DataTableAdapter dataTableAdapter=new DataTableAdapter(getActivity(), UsageTables.get((int)id).getRecords());
                     DataTable.setAdapter(dataTableAdapter);
                 }
 
