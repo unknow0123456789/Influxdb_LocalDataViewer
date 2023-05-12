@@ -12,4 +12,22 @@
     <color name="red">#FF0000</color>
     <color name="AlertRed">#E63636</color>
     <color name="ConfrimGreen">#32CD32</color>
+
+
+    // Temp categories
+    <color name="frozen">#0000cc</color>
+    <color name="refrigerated">#0066ff</color>
+    <color name="cool">#00ccff</color>
+    <color name="ambient">#ffff99</color>
+    <color name="warm">#ff9933</color>
+    <color name="excessive_heat">#ff6600</color>
+    <color name="very_hot">#ff3300</color>
+    <color name="extreme">#cc0000</color>
+
+    //Humidity categories
+    <color name="very_dry">#972205</color>
+    <color name="dry">#E43C32</color>
+    <color name="moist">#FFDD62</color>
+    <color name="wet">#4583FF</color>
+    <color name="very_wet">#18899C</color>
 </resources>

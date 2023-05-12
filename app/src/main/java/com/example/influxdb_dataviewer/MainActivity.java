@@ -1,23 +1,33 @@
 package com.example.influxdb_dataviewer;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.service.notification.StatusBarNotification;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.example.influxdb_dataviewer.ApiRelated.RefreshOption;
+import com.example.influxdb_dataviewer.Fragments.Gauge_Fragment;
 import com.example.influxdb_dataviewer.Fragments.Graph_Fragment;
 import com.example.influxdb_dataviewer.Fragments.Login_Fragment;
 import com.example.influxdb_dataviewer.Fragments.Setting_Fragment;
 import com.example.influxdb_dataviewer.Fragments.Table_Fragment;
+import com.example.influxdb_dataviewer.RecyclerView.GaugeAdapter;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
@@ -26,41 +36,95 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements CustomResponse{
+public class MainActivity extends AppCompatActivity implements CustomResponse {
     public InfluxDBClient currentClient;
     public RefreshOption CurrentRefreshOption;
     public List<FluxTable> CurrentTables;
     private Fragment CurrentFragment;
-    private boolean RefreshPressedCheck=false;
-    public int CurrentFragmentID =1;
-    public CustomResponse PostReceivedDB=new CustomResponse() {
+    private boolean RefreshPressedCheck = false;
+    public int CurrentFragmentID = 1;
+    public CustomResponse PostReceivedDB = new CustomResponse() {
         @Override
         public void OnResponse(Object obj) {
-            CurrentTables=(List<FluxTable>) obj;
+            CurrentTables = (List<FluxTable>) obj;
+            NotificationSetup(CurrentTables);
             //Log.d("testTransferTables", CurrentTables.get(0).getRecords().get(0).getMeasurement());
-            if(CurrentFragmentID !=2 && CurrentFragmentID !=3)
-            {
-                ChangeFragmentTo(2,false);
-            }
-            else {
-                switch (CurrentFragmentID){
+            if (CurrentFragmentID != 2 && CurrentFragmentID != 3 && CurrentFragmentID != 5) {
+                ChangeFragmentTo(2, false);
+            } else {
+                switch (CurrentFragmentID) {
                     case 2:
-                        if(RefreshPressedCheck==true){
-                            ChangeFragmentTo(2,true);
-                            RefreshPressedCheck=false;
+                        if (RefreshPressedCheck == true) {
+                            ChangeFragmentTo(2, true);
+                            RefreshPressedCheck = false;
                         }
                         break;
                     case 3:
-                        ChangeFragmentTo(3,true);
+                        ChangeFragmentTo(3, true);
                         break;
+                    case 5:
+                        ((Gauge_Fragment) CurrentFragment).SetupGlobalData(CurrentTables, true);
                 }
             }
         }
     };
-    LinearLayout NavMenu;
+
+    public ArrayList<GaugeAdapter.GaugeValue> ComposeGaugeValueList(List<FluxTable> tables) {
+        ArrayList<GaugeAdapter.GaugeValue> listGaugeValue = new ArrayList<>();
+        for (FluxTable table :
+                tables) {
+            String Measurement = table.getRecords().get(0).getMeasurement();
+            double value = (double) table.getRecords().get(table.getRecords().size() - 1).getValue();
+            if (Measurement.contains("Vibration"))
+                listGaugeValue.add(new GaugeAdapter.GaugeValue(Measurement, 1, value));
+            else listGaugeValue.add(new GaugeAdapter.GaugeValue(Measurement, 0, value));
+        }
+        return listGaugeValue;
+    }
+
+    private void NotificationSetup(List<FluxTable> tables) {
+        ArrayList<GaugeAdapter.GaugeValue> DataList = ComposeGaugeValueList(tables);
+        int count = 0;
+        for (GaugeAdapter.GaugeValue value :
+                DataList) {
+            count++;
+            if (value.Value > 71) {
+                Notification notification = new NotificationCompat.Builder(this, ForNotification.CHANNEL_ID)
+                        .setSmallIcon(R.mipmap.gauge_icon)
+                        .setColor(Color.BLACK)
+                        .setContentTitle("InfluxDB DataViewer Emergency notification")
+                        .setContentText(value.Measurement + " is at Dangerous state: " + value.Value)
+                        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                        .build();
+
+                NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+                if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+                boolean alreadynotiflag=false;
+                NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                StatusBarNotification[] notifications = mNotificationManager.getActiveNotifications();
+                for (StatusBarNotification noti :
+                        notifications) {
+                    if(noti.getId()==count) alreadynotiflag=true;
+                }
+
+                if(alreadynotiflag==false)notificationManagerCompat.notify(count, notification);
+            }
+        }
+    }
+    RelativeLayout NavMenu;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,14 +133,24 @@ public class MainActivity extends AppCompatActivity implements CustomResponse{
         //untouched
 
         this.NavMenu=findViewById(R.id.NavMenu);
+
+
         State1();
         this.OnResponse(CurrentFragmentID);
-        ImageButton RefreshButton=findViewById(R.id.Refresh_BTN),TableButton=findViewById(R.id.TableFragmentBTN),GraphButton=findViewById(R.id.GraphFragmentBTN),SettingButton=findViewById(R.id.SettingBTN);
+
+
+        ImageButton RefreshButton=findViewById(R.id.Refresh_BTN),GaugeButton=findViewById(R.id.GaugeFragmentBTN),TableButton=findViewById(R.id.TableFragmentBTN),GraphButton=findViewById(R.id.GraphFragmentBTN),SettingButton=findViewById(R.id.SettingBTN);
         RefreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 RefreshPressedCheck=true;
                 ReceiveDataFromInfluxDB(PostReceivedDB,true);
+            }
+        });
+        GaugeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ChangeFragmentTo(5,false);
             }
         });
         TableButton.setOnClickListener(new View.OnClickListener() {
@@ -101,6 +175,13 @@ public class MainActivity extends AppCompatActivity implements CustomResponse{
     }
     public void ChangeFragmentTo(int FragmentID,boolean ForceFull)
     {
+        try {
+            ((Gauge_Fragment)CurrentFragment).UpdateHandler.removeCallbacks(((Gauge_Fragment) CurrentFragment).UpdateRunnable);
+        }
+        catch (Exception ex)
+        {
+
+        }
         if(CurrentFragmentID!=FragmentID)
         {
             CurrentFragmentID =FragmentID;
@@ -134,11 +215,15 @@ public class MainActivity extends AppCompatActivity implements CustomResponse{
                     if(UiThreadLock==false) MainActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            MainActivity.this.OnResponse(-3);
-                            CR.OnResponse(tables);
+                            if(tables.size()>0) {
+                                MainActivity.this.OnResponse(-3);
+                                CR.OnResponse(tables);
+                            }
+                            else
+                                MainActivity.this.OnResponse(-4);
                         }
                     });
-                    else CR.OnResponse(tables);
+                    else if(tables.size()>0) CR.OnResponse(tables);
                 }
                 catch (Exception ex)
                 {
@@ -199,11 +284,11 @@ public class MainActivity extends AppCompatActivity implements CustomResponse{
         int FragmentOption=(int) obj;
         switch (FragmentOption)
         {
-            case -4:
+            case -4:        //only for Setting fragment
                 ((Setting_Fragment)CurrentFragment).FailedNotification.setVisibility(View.VISIBLE);
                 Stop_andGONE_LoadingEffect(((Setting_Fragment)CurrentFragment).LoadingEffect);
                 break;
-            case -3:
+            case -3:        //only for Setting fragment
                 ((Setting_Fragment)CurrentFragment).FailedNotification.setVisibility(View.GONE);
                 Stop_andGONE_LoadingEffect(((Setting_Fragment)CurrentFragment).LoadingEffect);
                 break;
@@ -242,7 +327,16 @@ public class MainActivity extends AppCompatActivity implements CustomResponse{
                 });
                 SetFragmentToFocus(setting_fragment);
                 break;
+            case 5:
+                SetFragmentToFocus(new Gauge_Fragment(CurrentTables, new CustomResponse() {
+                    @Override
+                    public void OnResponse(Object obj) {
+                        ReceiveDataFromInfluxDB(PostReceivedDB,true);
+                    }
+                }));
+                break;
         }
+
 
     }
 

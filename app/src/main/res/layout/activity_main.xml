@@ -15,11 +15,10 @@
         android:layout_weight="9"
         android:id="@+id/FragmentHolder"
         ></FrameLayout>
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="horizontal"
         android:background="@drawable/round_shape"
         android:backgroundTint="@color/grayTrans"
         android:layout_margin="@dimen/navMargin"
@@ -27,16 +26,17 @@
         android:id="@+id/NavMenu"
         >
         <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerVertical="true"
             android:background="@drawable/round_shape"
             android:layout_marginHorizontal="@dimen/navButtonMargin"
+            android:id="@+id/Refresh_BTN_Container"
+            android:layout_toLeftOf="@id/GaugeFragmentBTN_Container"
             >
             <ImageButton
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_centerInParent="true"
                 android:scaleType="fitCenter"
                 android:id="@+id/Refresh_BTN"
                 android:src="@mipmap/refresh_icon"
@@ -44,9 +44,28 @@
                 ></ImageButton>
         </RelativeLayout>
         <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/round_shape"
+            android:layout_marginHorizontal="@dimen/navButtonMargin"
+            android:id="@+id/GaugeFragmentBTN_Container"
+            android:layout_toLeftOf="@id/TableFragmentBTN_Container"
+            >
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:id="@+id/GaugeFragmentBTN"
+                android:src="@mipmap/gauge_icon"
+                android:background="?selectableItemBackgroundBorderless"
+                ></ImageButton>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerInParent="true"
+            android:id="@+id/TableFragmentBTN_Container"
             android:background="@drawable/round_shape"
             android:layout_marginHorizontal="@dimen/navButtonMargin"
             >
@@ -61,9 +80,11 @@
                 ></ImageButton>
         </RelativeLayout>
         <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerVertical="true"
+            android:id="@+id/GraphFragmentBTN_Container"
+            android:layout_toRightOf="@id/TableFragmentBTN_Container"
             android:background="@drawable/round_shape"
             android:layout_marginHorizontal="@dimen/navButtonMargin"
             >
@@ -78,12 +99,13 @@
                 ></ImageButton>
         </RelativeLayout>
         <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerVertical="true"
+            android:id="@+id/SettingBTN_Container"
+            android:layout_toRightOf="@id/GraphFragmentBTN_Container"
             android:background="@drawable/round_shape"
             android:layout_marginHorizontal="@dimen/navButtonMargin"
-
             >
             <ImageButton
                 android:layout_width="match_parent"
@@ -95,6 +117,6 @@
                 android:id="@+id/SettingBTN"
                 ></ImageButton>
         </RelativeLayout>
-    </LinearLayout>
+    </RelativeLayout>
 
 </androidx.appcompat.widget.LinearLayoutCompat>
